@@ -18,3 +18,7 @@ localPathStorage:
           - /var/local-path-provisioner
     storageClass:
       defaultClass: true
+
+sealedSecrets:
+  enabled: true
+  targetRevision: 2.17.2
