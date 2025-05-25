@@ -1,0 +1,27 @@
+{{- if .Values.keycloak.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: keycloak
+  namespace: {{ .Release.Namespace }}
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/maxherbs/home-lab
+    path: keycloak
+    targetRevision: {{ .Values.keycloak.targetRevision | default "HEAD" }}
+    {{- if .Values.keycloak.valuesObject }}
+    helm:
+      valuesObject:
+        {{- .Values.keycloak.valuesObject | toYaml | nindent 8 }}
+    {{- end }}
+  destination:
+    namespace: keycloak
+    server: {{ .Values.server }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}
