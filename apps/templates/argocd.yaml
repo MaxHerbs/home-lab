@@ -1,0 +1,29 @@
+{{- if .Values.argocd.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/maxherbs/home-lab
+    path: argocd
+    targetRevision: {{ .Values.argocd.targetRevision | default "HEAD" }}
+    {{- if .Values.argocd.valuesObject }}
+    helm:
+      valuesObject:
+        {{- .Values.argocd.valuesObject | toYaml | nindent 8 }}
+    {{- end }}
+  destination:
+    namespace: argocd
+    server: {{ .Values.server }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}

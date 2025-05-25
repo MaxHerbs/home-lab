@@ -1,0 +1,5 @@
+server: https://kubernetes.default.svc
+
+argocd:
+  enabled: true
+  targetRevision: argocd

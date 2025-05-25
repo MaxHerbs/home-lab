@@ -1,0 +1,12 @@
+argo-cd:
+  enabled: true
+  rbac:
+    create: true
+  configs:
+    params:
+      server.insecure: true
+
+ingress:
+  enabled: true
+  className: traefik
+  host: argo-cd.theoffice.uk
