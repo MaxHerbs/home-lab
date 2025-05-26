@@ -29,3 +29,7 @@ longhorn:
   values:
     preUpgradeChecker:
       jobEnabled: false
+
+monitoring:
+  enabled: true
+  targetRevision: argocd

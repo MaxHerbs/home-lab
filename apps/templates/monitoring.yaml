@@ -1,0 +1,27 @@
+{{- if .Values.monitoring.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: monitoring
+  namespace: {{ .Release.Namespace }}
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/maxherbs/home-lab
+    path: monitoring
+    targetRevision: {{ .Values.monitoring.targetRevision | default "HEAD" }}
+    {{- if .Values.monitoring.valuesObject }}
+    helm:
+      valuesObject:
+        {{- .Values.monitoring.valuesObject | toYaml | nindent 8 }}
+    {{- end }}
+  destination:
+    namespace: monitoring
+    server: {{ .Values.server }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}
