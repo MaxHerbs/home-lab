@@ -11,5 +11,8 @@ dependencies:
 - name: common
   repository: oci://docker.io/bitnamicharts
   version: 2.23.0
-digest: sha256:40d63a5ddf001158cebde35a40933396d6cae2beac46786b95828e4c3d1011f1
-generated: "2025-05-26T12:53:09.213210679+01:00"
+- name: tempo
+  repository: https://grafana.github.io/helm-charts
+  version: 1.21.1
+digest: sha256:25c6a7d5d3b15f7154a9bfba342ade7d70febf7a49b1c184d9b56235ab843251
+generated: "2025-05-26T19:41:02.611638036+01:00"

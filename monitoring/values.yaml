@@ -8,6 +8,16 @@ opentelemetry-collector:
       containerPort: 9090
       servicePort: 9090
       protocol: TCP
+    otlp-grpc:
+      enabled: true
+      containerPort: 4317
+      servicePort: 4317
+      protocol: TCP
+    otlp-http:
+      enabled: true
+      containerPort: 4318
+      servicePort: 4318
+      protocol: TCP
 
   podAnnotations:
     prometheus.io/scrape: "true"
@@ -17,30 +27,34 @@ opentelemetry-collector:
     receivers:
       otlp:
         protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
 
     exporters:
       prometheus:
         endpoint: 0.0.0.0:9090
-
+      otlp:
+        endpoint: "{{ .Release.Name }}-tempo:4317"
+        tls:
+          insecure: true
       debug: {}
 
     service:
       pipelines:
         metrics:
-          receivers:
-            - otlp
-          exporters:
-            - prometheus
-            - debug
+          receivers: [otlp]
+          exporters: [prometheus, debug]
+        traces:
+          receivers: [otlp]
+          exporters: [otlp, debug]
 
       telemetry:
         logs:
           level: "DEBUG"
           development: true
           encoding: "json"
-
 
   ingress:
     enabled: true
@@ -51,6 +65,39 @@ opentelemetry-collector:
           - path: /
             pathType: Prefix
             port: 4318
+
+tempo:
+  replicaCount: 1
+  storage:
+    trace:
+      backend: local
+      local:
+        path: /var/tempo/traces
+  compactor:
+    enabled: true
+  ingester:
+    replicaCount: 1
+  distributor:
+    replicaCount: 1
+  queryFrontend:
+    enabled: true
+  querier:
+    replicaCount: 1
+  service:
+    type: ClusterIP
+    ports:
+      http: 3100
+      grpc: 4317
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - host: tempo.theoffice.uk
+        paths:
+          - path: /
+            pathType: Prefix
+
+
 
 prometheus:
   kube-state-metrics:
@@ -94,6 +141,12 @@ grafana:
           access: proxy
           url: http://{{ .Release.Name }}-prometheus-server
           isDefault: true
+        - name: Tempo
+          type: tempo
+          access: proxy
+          url: http://{{ .Release.Name }}-tempo:3100
+          jsonData:
+            maxTraceDuration: "24h"
 
   dashboardProviders:
     dashboardproviders.yaml:
