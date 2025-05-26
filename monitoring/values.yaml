@@ -59,9 +59,99 @@ prometheus:
     enabled: false
   prometheus-pushgateway:
     enabled: false
+  prometheus-node-exporter:
+    enabled: true
   server:
     ingress:
       enabled: true
       ingressClassName: traefik
       hosts:
         - prometheus.theoffice.uk
+
+grafana:
+  enabled: true
+  initChownData:
+    enabled: false
+
+  adminUser: admin
+  adminPassword: supersecurepassword
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    hosts:
+      - grafana.theoffice.uk
+    paths:
+      - path: /
+        pathType: Prefix
+
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          access: proxy
+          url: http://{{ .Release.Name }}-prometheus-server
+          isDefault: true
+
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+
+  dashboards:
+    default:
+      node-exporter-full:
+        gnetId: 1860
+        revision: 29
+        datasource: Prometheus
+      kubernetes-monitoring:
+        gnetId: 12740
+        revision: 1
+        datasource: Prometheus
+      kubernetes-cluster-monitoring:
+        gnetId: 315
+        revision: 2
+        datasource: Prometheus
+      kubernetes-monitoring-overview:
+        gnetId: 14623
+        revision: 1
+        datasource: Prometheus
+      monitoring-golden-signals:
+        gnetId: 21073
+        revision: 1
+        datasource: Prometheus
+      compute-resources-namespace-pods:
+        gnetId: 12117
+        revision: 1
+        datasource: Prometheus
+      networking-namespace-pods:
+        gnetId: 12125
+        revision: 1
+        datasource: Prometheus
+      kubernetes-deployments:
+        gnetId: 5225
+        revision: 1
+        datasource: Prometheus
+      k8s-cluster-deployments:
+        gnetId: 9619
+        revision: 1
+        datasource: Prometheus
+
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      folder: default
+
+  plugins:
+    - grafana-piechart-panel
