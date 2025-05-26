@@ -1,0 +1,27 @@
+{{- if .Values.longhorn.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: longhorn
+  namespace: {{ .Release.Namespace }}
+spec:
+  project: default
+  source:
+    repoURL: https://charts.longhorn.io/
+    chart: longhorn
+    targetRevision: {{ .Values.longhorn.targetRevision }}
+    {{- with .Values.longhorn.values }}
+    helm:
+      values: |
+        {{- . | toYaml | nindent 8 }}
+    {{- end }}
+  destination:
+    namespace: longhorn-system
+    server: {{ .Values.server }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}

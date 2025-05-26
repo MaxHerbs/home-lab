@@ -22,3 +22,10 @@ localPathStorage:
 sealedSecrets:
   enabled: true
   targetRevision: 2.17.2
+
+longhorn:
+  enabled: false
+  targetRevision: v1.8.1
+  values:
+    preUpgradeChecker:
+      jobEnabled: false
