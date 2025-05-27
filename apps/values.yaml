@@ -8,6 +8,10 @@ keycloak:
   enabled: false
   targetRevision: argocd
 
+certManager:
+  enabled: true
+  targetRevision: argocd
+
 localPathStorage:
   enabled: true
   targetRevision: v0.0.31

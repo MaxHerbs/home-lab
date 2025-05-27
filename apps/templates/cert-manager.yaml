@@ -1,0 +1,27 @@
+{{- if .Values.certManager.enabled }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: {{ .Release.Namespace }}
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/maxherbs/home-lab
+    path: cert-manager
+    targetRevision: {{ .Values.certManager.targetRevision | default "HEAD" }}
+    {{- if .Values.certManager.valuesObject }}
+    helm:
+      valuesObject:
+        {{- .Values.certManager.valuesObject | toYaml | nindent 8 }}
+    {{- end }}
+  destination:
+    namespace: cert-manager
+    server: {{ .Values.server }}
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{- end }}
