@@ -131,6 +131,10 @@ grafana:
     paths:
       - path: /
         pathType: Prefix
+    tls:
+      - secretName: tls-grafana
+        hosts:
+          - grafana.theoffice.uk
 
   datasources:
     datasources.yaml:
