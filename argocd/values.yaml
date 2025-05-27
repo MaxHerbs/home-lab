@@ -9,7 +9,7 @@ argo-cd:
       url: https://argo-cd.theoffice.uk
       oidc.config: |
         name: Auth0
-        issuer: https://dev-vjmj8roq7qd1h82m.uk.auth0.com
+        issuer: https://dev-vjmj8roq7qd1h82m.uk.auth0.com/
         clientID: t4clTNxScIqcWhlCX8UUYrBJTQUeZv3H
         clientSecret: $argocd-oauth:oidc
         requestedScopes:
