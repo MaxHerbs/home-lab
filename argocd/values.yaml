@@ -6,6 +6,7 @@ argo-cd:
     params:
       server.insecure: true
     cm:
+      timeout.reconciliation: 43200s
       url: https://argo-cd.theoffice.uk
       oidc.config: |
         name: Auth0
