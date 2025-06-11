@@ -5,7 +5,7 @@ argocd:
   targetRevision: argocd
 
 keycloak:
-  enabled: false
+  enabled: true
   targetRevision: argocd
 
 certManager:
