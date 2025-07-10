@@ -1,4 +1,35 @@
-ingress:
+keycloak:
   enabled: true
-  className: traefik
-  hostname: keycloak.theoffice.uk
+  image:
+    debug: true
+  postgresql:
+    enabled: false
+  externalDatabase:
+    externalDatabase:
+    host: "keycloak-postgresql"
+    port: 5432
+    database: bitnami_keycloak
+    existingSecret: postgres-config
+    existingSecretUserKey: keycloak_user
+    existingSecretPasswordKey: keycloak_password
+  ingress:
+    enabled: true
+    pathType: Prefix
+    hostname: authn.theoffice.uk
+  proxy: edge
+  cache:
+    enabled: false
+  networkPolicy:
+    enabled: false
+
+postgresql:
+  enabled: true
+  auth:
+    existingSecret: postgres-config
+    secretKeys: 
+      adminPasswordKey: postgres-password
+      userPasswordKey: password
+  primary:
+    initdb:
+      scriptsSecret: postgres-initdb-script
+

@@ -9,3 +9,7 @@ dependencies:
   - name: keycloak
     repository: oci://docker.io/bitnamicharts
     version: 24.7.1
+  - name: postgresql
+    repository: oci://docker.io/bitnamicharts
+    version: 16.7.17
+    condition: postgresql.enabled

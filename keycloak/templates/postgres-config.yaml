@@ -1,0 +1,30 @@
+{{/* apiVersion: v1 */}}
+{{/* kind: Secret */}}
+{{/* metadata: */}}
+{{/*   name: postgres-config */}}
+{{/* type: Opaque */}}
+{{/* data: */}}
+{{/*   password: {{ include "keycloak.password" . | b64enc | quote }} */}}
+{{/*   postgres-password: {{ include "keycloak.postgresPassword" . | b64enc | quote }} */}}
+{{/*   keycloak_user: a2V5Y2xvYWsK */}}
+{{/*   keycloak_password: {{ include "keycloak.postgresPassword" . | b64enc | quote }} */}}
+{{/**/}}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: postgres-config
+  namespace: keycloak
+spec:
+  encryptedData:
+    keycloak_password: AgA7JYwsFTZtM143RdXheKOHjP6ctiZVJ04jJ0cK7LB4GgQ4gIxJEa2zK1Cl/2GOozjCzi8r31FThnQ5GYYAI6pdCFtH1JDcuXYEfm51L9zSOnbIn7TZg85Y7445kPeHsGksbOfCZCjCztb1e6c5mSrYBC6a4LOhjjEBwY6XS/OvDFgw3HrSj9V0Spzs8vB2ScJt0zgI9f9Rn9a2fZqKok2MQDYz9drnPBxZffJQvJ7cjnVPpp/tCEnnJ66RZBKZmz3kcZwHgpCuWBBzdB/kRLzw8G451oSrDCtc8zG6mCinaFuba54tDsbT6Nv1fVg8wGNTfNfaenvHZIpOXby3r3yC8bw1zGAUWo0vbsVcZzn2UTLCU5nkl4jb5YdYQ5XsJ6Ide9IIlD/3QZhjVQtsPkcF9YjATZgZzzGK5/hvPhXDVzu7WQ3p3bQzCybM6eWzwXUxGR74qFcVGP5A2mBMq8YSxL2oOgJ8rubgaDM8g3vA1dfiqSMG7v6qB8GV3gehy1xWU1kId0RX4D3sBD6KAmA8On9mebs09CujADSX7ai38rAb7KW/03eGaU7zhnCykbDwFeaYDvpwma7F2RdfjZvhYbQbgDStnomdF4t5V8xorDcR/1PdJVADgFDX39buvEeYLafVBmnywHNDQlM2MladyXWi7JqGp5QlzNLZlolcsR2BWp6QjVI7Uyo6lFCV+PpYTWjFwPS6Nm2ER8VKcnPvrOnlPvCSvqs=
+    keycloak_user: AgBushecFLvVmVCy0/gEryUocAkgZpmWac0utRh5O4uvuS78BnPEOaoNkijiuXJxoGkEcXpPX3LsiJMpG0Zgm0zqDeNfr/vagM77RDdci9RuBaklw/z2suzkjqWZLo/tqQKNQZsYGdjy6hSMqvSpJGk9kUSZbU78LGVOgMoZswiRp1MHMQA0vD0T/svyzDFt7rDwzNGwrtmGSk8MghsTOVxe6v0al+pSvSQLxWsfF/50A37SXUARBvVqy7pJsJwWaxR0iqqPVBJp7I0lQufKMeurTN3NtZpAK7QlRlyM+w8BYIp6iXU/n6XG1TOFxira/GZiI/nzQzYc+xv54bVrpNNS1YhuQEEafsvHOBEGRYIRiQbmeHtMh5Q/Tt//BTxY+h5sEzZDSevGCIa7KNEgmZXcPgGtYqM5Nt6UQVV9Uk73ymXYTIAL15Qj6NRxyG8WE/p2L/TSALYDk+UpPeXXj0MJ5EJX5abrgBVxxYiu99qihXAzVeAFJpJDUtgLWep0UoCUVai2NE8R6OpjtdwYligQ5BUch63aIKyKD9Hv2MENLl72FLyfPIAeqQReevPzUu72pYczRhN14BF1txrWvyPQ6Nql0yXwuTuPCmQ+lyqsnJKzHjPjnsfOZeUio4boPX78Wwco7SoBivw69mqFZCU2J2JytEwck/Jd3w0e+uHJa2N8zYxNhFWQXFRP6Rws9MZI9kSMD/1vseA=
+    password: AgAN98/ttdQceaIy4tW0VuKR//8gptqxGgP2Tm9e8rGBpP/c/N25iaXysHxZHq7whJPF1ne+PBUu0ygvorLkT7wLc7sGGKr5k70tSjrFYGJh9nb1DJyHvSjc+hnCSoor5qG+2L3Z2/Q9AkK+/J3jF7JMPT9IlwsYlj5/d1R5E/yz7sXtYaOpagB15xjdfutAVtffZsY6FdiJyXYw0a4zzWN9XuECr4nqqEPUYfQleNa1q2Y6GEZ7G7hXA0z4W0EXZkslBBcNfbey0zAC7yFb93S5/itHkmUTVQgjN0plcZqrgtIp2B+rk2a9WSJ7QjbUMtUOtnGTmLl4zdYA2PVvA7IHYV7A/TjnXhTcnsmCRJSzFHaOH/+YhPFFvhTOyMrEtDTAoe+AS7r94ApYnEJManZ/9EhSkTZuTvXJXGMkCeYRdyYUZIsVZf5EaX6Uo0g73r9XVZFsSValD+0skLRCkZtB7MqbbU6xS4Ztnl2HqQAKB7hgwPqsmR6jEfzip1U/AhhwGzKNWRXBmv7XV+/LmX/5ZDHvtfH4uCvnCBOCJRgR3fa8A8cKYni+ELU9ur6prIP4rX6ClhqXgS68c4OarBR9/K34wlJr1xfEAtG93gxYbY7392c9B7PafqHSlV4yAqd7h6VdKt3o1/186cJrRg3jsLe1xOAPHLR0flPevRwVaX8S2quhpYiXmZ+knGkarCkNuFudwSJUfPCTBJ35Odl9IDBn/NtjXjg=
+    postgres-password: AgDNjjdoFShDH7zhmh7zS2p6DxmWjftXc7XqDOGXQ3GglGwXIJ85DYWMLVIeIQhu5259WWW4SIzWH8Sv9UaBypSPRlnhqxkPWuI1DHX4oOoVeAFAR5L3rlPfPLQi/W/1R1MWjUzsVRR9mg8fuM4NPJWdGvKyaAaeCTe1l2seYZWSD7LjfAfCGuAWuKH1DXVnZBfFOmmTCposiA9gnNb+QrSeNES8e4H7yjXM5q7fIX7pcnJSNJ6tiTn8Giwf7O1rw1naEuuL8QnXjNBWSZdMgGz4Es1/74gCt8s/r00hm+3NrINojSUDsg63XrxQNVSKvfv96gNazgux0xVMXn4s/WPhMe2FOYjnHMKA40I9zy14L1RqC2f/3+ShdQafw3gJ4GreTMUJFGyqpgSJwZfQmJH3fTCa95qTN5jYrUIzCteocGQuqfcwte9q5hDljOoOuyJvIz32v7OB2mIfmNr55YWPjxR3uL2WfYWGNQcpc+ZLLaW0sk7x0GmeNF2Fi5keW0g4/LlMLzLyjSYwvpwt5CnGM925zsonPrU3/3r5HTKcWBgveczsgYr1UDQpIp1ocnT6Rz6Iu10yEuBCvW/JdnlxmC+fF6r7FbiLgrlYDKVt4T4toNKia+lh1C0YJjeBh5ZUpWopMjPqme9QlRYC+Z9wFo954HeFK/dIFDlrRft+oR7ONa0mOsTFBFAc5nqDXnjf0UoCbi1qHfdULCon1FiF6fAqnV4mDM0=
+  template:
+    metadata:
+      annotations:
+        argocd.argoproj.io/tracking-id: keycloak:/Secret:keycloak/postgres-config
+      name: postgres-config
+      namespace: keycloak
+    type: Opaque
