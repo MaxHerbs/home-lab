@@ -1,9 +1,20 @@
-apiVersion: v1
-kind: Secret
+{{/* apiVersion: v1 */}}
+{{/* kind: Secret */}}
+{{/* metadata: */}}
+{{/*   name: postgres-initdb-script */}}
+{{/* data: */}}
+{{/*   init.sql: {{ printf "CREATE USER keycloak WITH PASSWORD '%s';\nCREATE DATABASE bitnami_keycloak OWNER keycloak;" | b64enc }} */}}
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
 metadata:
   name: postgres-initdb-script
-data:
-  init.sql: {{ printf "CREATE USER keycloak WITH PASSWORD '%s';\nCREATE DATABASE bitnami_keycloak OWNER keycloak;" (include "keycloak.postgresPassword" .) | b64enc }}
-
-
-
+  namespace: keycloak
+spec:
+  encryptedData:
+    init.sql: AgCy4zUryadlMEgphZix9jdOTHRYjlNHDeikGCXUfnFFK+86w3G7gukBF2J3Hv9OmDbaL7bmEqXrvrvo5GVpGec79ufEjJ0JhAg1oLIoAWwZzZs81BfycwkN6+FZpgJU5PI2EPgA8T4TUOTBE9XdeYmJZLFn0oVnuxHvjAEjn/aPKCjLd5BCNtrAFKL17En4MLmkutO9IcV3PW/+P5rPLxGZC6fb1GUMNCrbVA1ZGkXt9HYsnc4f9ltnEkEp7bFhLuEmymcybZ3uco4JNBLyM5bn9aOFp17fVP0cYCU6Dj6VqqwNGSKfCsNvyT9z3bwUzrjbcsvafTFGGFIkmVWJv53ZgiFIWiTNtcHaCX4bD4bPzZHVoWpVi5CQruNsnREisY4qb6QZufsxzCJimF6UyJyUvKiBrJ06fxrwmH5jDStlRqLki4tkAbM6ceZYgAN66tTT1W6LxoAxNQrtbHX92Rg4fDy3cbSxgU8hDJInuBRwZ892tvQi+XoAmjcYDaSk4SlTE979AxHLKWrRO3vxBHD/4iO2Se8AdQuou2RGZT0PPzwCdB3JxM79qv5MT9R9BkVg6v3nBQfZasF+lNvrQv5bwZvIA/QZPkjOuKPVDhw9KzbFUQwERI0NXswIOcDeApnY+mmYrFWLzAL7Jboq2NImGM8uipwOqpYRtZVI+IdGvvizcCKxAPKwvEgctj7u7x7dm8wr9G/mjFMSTqHk6csTeIU6smInx+LuKsJ+FHa6JqitbuUV6g3qR4KH1whTT0U6cKoJn5P6ytpEedsU1DAE2Srsl22g9xlozQDwssLjwSgiP1bbMBx6XAQkdczKEHLvQdbghSxt8xaKnurDdsw=
+  template:
+    metadata:
+      name: postgres-initdb-script
+      namespace: keycloak
+    type: Opaque
