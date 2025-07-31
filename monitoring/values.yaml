@@ -54,7 +54,6 @@ opentelemetry-collector:
       pipelines:
         metrics:
           receivers:
-            - prometheus
             - otlp
           processors:
             - memory_limiter
