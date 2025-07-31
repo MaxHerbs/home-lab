@@ -1,17 +1,25 @@
-serviceAccount:
-  create: true
-  annotations: {}
-  name: ""
-
 opentelemetry-collector:
   enabled: true
-  resources:
-    limits:
-      cpu: 250m
-      memory: 512Mi
-    requests:
-      cpu: 250m
-      memory: 512Mi
+  mode: deployment
+  image:
+    repository: otel/opentelemetry-collector-contrib
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9090"
+  ports:
+    prometheus:
+      enabled: true
+      containerPort: 9090
+      servicePort: 9090
+      protocol: TCP
+    jaeger-compact:
+      enabled: false
+    jaeger-thrift:
+      enabled: false
+    jaeger-grpc:
+      enabled: false
+    zipkin:
+      enabled: false
   ingress:
     enabled: true
     ingressClassName: "traefik"
@@ -22,123 +30,37 @@ opentelemetry-collector:
             pathType: Prefix
             port: 4318
     tls: []
-  image:
-    repository: "otel/opentelemetry-collector-contrib"
-  fullnameOverride: otel-collector
-  mode: deployment
-  presets:
-    kubernetesAttributes:
-      enabled: true
-  service:
-    type: ClusterIP
-  ports:
-    metrics:
-      enabled: true
-  podAnnotations:
-    prometheus.io/scrape: "true"
+  resources:
+    requests:
+      cpu: 512m
+      memory: 512Mi
+    limits:
+      cpu: 1
+      memory: 512Mi
   config:
     receivers:
+      prometheus:
+        config:
       otlp:
         protocols:
           grpc:
             endpoint: 0.0.0.0:4317
           http:
             endpoint: 0.0.0.0:4318
-            cors:
-              allowed_origins:
-                - "http://*"
-                - "https://*"
-
     exporters:
-      otlp:
-        endpoint: jaeger-collector:4317
-        tls:
-          insecure: true
-      otlphttp/prometheus:
-        endpoint: http://prometheus:9090/api/v1/otlp
-        tls:
-          insecure: true
-      opensearch:
-        logs_index: otel
-        http:
-          endpoint: http://opensearch:9200
-          tls:
-            insecure: true
-
-    processors:
-      resource:
-        attributes:
-        - key: service.instance.id
-          from_attribute: k8s.pod.uid
-          action: insert
-
-    connectors:
-      spanmetrics: {}
-
+      prometheus:
+        endpoint: 0.0.0.0:9090
     service:
       pipelines:
-        traces:
-          processors: [memory_limiter, resource, batch]
-          exporters: [otlp, debug, spanmetrics]
         metrics:
-          receivers: [otlp, spanmetrics]
-          processors: [memory_limiter, resource, batch]
-          exporters: [otlphttp/prometheus, debug]
-        logs:
-          processors: [memory_limiter, resource, batch]
-          exporters: [opensearch, debug]
-      telemetry:
-        metrics:
-          level: detailed
-          readers:
-            - periodic:
-                interval: 10000
-                timeout: 5000
-                exporter:
-                  otlp:
-                    protocol: grpc
-                    endpoint: otel-collector:4318
-
-jaeger:
-  enabled: true
-  fullnameOverride: jaeger
-  provisionDataStore:
-    cassandra: false
-  allInOne:
-    enabled: true
-    resources:
-      limits:
-        cpu: 500m
-        memory: 512Mi
-      requests:
-        cpu: 100m
-        memory: 256Mi
-    ingress:
-      enabled: true
-      ingressClassName: "traefik"
-      hosts:
-        - jaeger.theoffice.uk
-    args:
-      - "--memory.max-traces=5000"
-      - "--query.base-path=/jaeger/ui"
-      - "--prometheus.server-url=http://prometheus:9090"
-      - "--prometheus.query.normalize-calls=true"
-      - "--prometheus.query.normalize-duration=true"
-    extraEnv:
-      - name: METRICS_STORAGE_TYPE
-        value: prometheus
-      - name: COLLECTOR_OTLP_GRPC_HOST_PORT
-        value: 0.0.0.0:4317
-      - name: COLLECTOR_OTLP_HTTP_HOST_PORT
-        value: 0.0.0.0:4318
-  storage:
-    type: memory
-  agent:
-    enabled: false
-  collector:
-    enabled: false
-  query:
-    enabled: false
+          receivers:
+            - prometheus
+            - otlp
+          processors:
+            - memory_limiter
+            - batch
+          exporters:
+            - prometheus
 
 prometheus:
   enabled: true
@@ -170,14 +92,6 @@ prometheus:
       ingressClassName: "traefik"
       hosts:
         - prometheus.theoffice.uk
-    fullnameOverride: prometheus
-    extraFlags:
-      - "enable-feature=exemplar-storage"
-      - "web.enable-otlp-receiver"
-    global:
-      scrape_interval: 5s
-      scrape_timeout: 3s
-      evaluation_interval: 30s
     tsdb:
       out_of_order_time_window: 30m
     prometheus.yml:
@@ -203,6 +117,13 @@ prometheus:
           - k8s.statefulset.name
     service:
       servicePort: 9090
+  extraScrapeConfigs: |
+    - job_name: 'otel-collector'
+      scrape_interval: 30s
+      scrape_timeout: 30s
+      static_configs:
+        - targets:
+            - "otel-collector.{{ .Release.Namespace }}.svc.cluster.local:9090"
 
 grafana:
   enabled: true
@@ -218,7 +139,6 @@ grafana:
     ingressClassName: "traefik"
     hosts:
       - grafana.theoffice.uk
-  fullnameOverride: grafana
   testFramework:
     enabled: false
   grafana.ini:
@@ -287,30 +207,3 @@ grafana:
   dashboardsConfigMaps:
     default: grafana-dashboards
 
-opensearch:
-  enabled: true
-  resources:
-    limits:
-      cpu: 1
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  ingress:
-    enabled: true
-    ingressClassName: "traefik"
-    hosts:
-      - opensearch.theoffice.uk
-
-  fullnameOverride: opensearch
-  singleNode: true
-  opensearchJavaOpts: "-Xms300m -Xmx300m"
-  persistence:
-    enabled: false
-  extraEnvs:
-    - name: "bootstrap.memory_lock"
-      value: "true"
-    - name: "DISABLE_INSTALL_DEMO_CONFIG"
-      value: "true"
-    - name: "DISABLE_SECURITY_PLUGIN"
-      value: "true"
