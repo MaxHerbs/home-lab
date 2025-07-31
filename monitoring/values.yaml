@@ -46,6 +46,8 @@ opentelemetry-collector:
           http:
             endpoint: 0.0.0.0:4318
     exporters:
+      debug:
+        loglevel: debug
       prometheus:
         endpoint: 0.0.0.0:9090
     service:
@@ -58,6 +60,7 @@ opentelemetry-collector:
             - batch
           exporters:
             - prometheus
+            - debug
 
 prometheus:
   enabled: true
