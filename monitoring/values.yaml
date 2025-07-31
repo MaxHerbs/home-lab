@@ -47,7 +47,7 @@ opentelemetry-collector:
             endpoint: 0.0.0.0:4318
     exporters:
       debug:
-        loglevel: debug
+        verbosity: detailed
       prometheus:
         endpoint: 0.0.0.0:9090
     service:
