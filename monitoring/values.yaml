@@ -39,8 +39,6 @@ opentelemetry-collector:
       memory: 512Mi
   config:
     receivers:
-      prometheus:
-        config:
       otlp:
         protocols:
           grpc:
@@ -122,7 +120,7 @@ prometheus:
       scrape_timeout: 30s
       static_configs:
         - targets:
-            - "otel-collector.{{ .Release.Namespace }}.svc.cluster.local:9090"
+            - "{{ .Relase.Name }}-opentelemetry-collector:9090"
 
 grafana:
   enabled: true
